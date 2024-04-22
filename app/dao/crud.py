@@ -1,9 +1,10 @@
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.future import select
 from datetime import datetime
-from app.models import Repository
-from app.utils import logger
-
+from ..models import Repository, Base
+from ..utils import logger
+from ..config import settings
 
 class RepositoryCRUD:
 
@@ -20,7 +21,7 @@ class RepositoryCRUD:
             if (current_time - repo.last_accessed).total_seconds() < repo.ttl:
                 return repo
             else:
-                cls.delete_repository(db_session, full_name)
+                await cls.delete_repository(db_session, full_name)
         return None
 
     @classmethod
@@ -88,7 +89,7 @@ class RepositoryCRUD:
 
             if repository_to_delete:
                 # Delete the repository if it exists
-                db_session.delete(repository_to_delete)
+                await db_session.delete(repository_to_delete)
                 await db_session.commit()
                 logger.info(f"Successfully deleted repository with full name: {full_name}")
             else:
@@ -98,3 +99,21 @@ class RepositoryCRUD:
         except Exception as e:
             logger.error(f"Error occurred when deleting the repository: {e}")
             raise e
+
+
+# Database engine
+engine = create_async_engine(settings.database_url, echo=True)
+
+# Session factory
+AsyncSessionLocal = sessionmaker(bind=engine, class_=AsyncSession, expire_on_commit=False)
+
+
+async def create_tables():
+    try:
+        # Create database tables on startup
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+        logger.info("Tables created successfully.")
+    except Exception as e:
+        logger.error(f"Error occurred while creating tables: {str(e)}")
+        raise e

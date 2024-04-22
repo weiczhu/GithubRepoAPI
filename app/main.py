@@ -5,10 +5,9 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import datetime
 from .utils import logger
-from .models import AsyncSessionLocal, Base, engine
 from .schemas import RepositorySchema
-from app.dao.crud import RepositoryCRUD
-from app.external.github_api import fetch_repository_details
+from .dao.crud import RepositoryCRUD, AsyncSessionLocal, create_tables
+from .external.github_api import fetch_repository_details
 import httpx
 
 app = FastAPI()
@@ -17,12 +16,10 @@ app = FastAPI()
 @app.on_event("startup")
 async def startup_event():
     try:
-        # Create database tables on startup
-        async with engine.begin() as conn:
-            await conn.run_sync(Base.metadata.create_all)
-        logger.info("Tables created successfully.")
+        await create_tables()
+        logger.info("App started successfully.")
     except Exception as e:
-        logger.error(f"Error occurred while creating tables: {str(e)}")
+        logger.error(f"Error occurred while App starting: {str(e)}")
         raise e
 
 
