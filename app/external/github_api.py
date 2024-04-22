@@ -1,7 +1,7 @@
 import httpx
-from .config import settings
-from .utils import logger
-from .schemas import GitHubRepositoryResponse
+from app.config import settings
+from app.utils import logger
+from app.schemas import GitHubRepositoryResponse
 
 global_timeout = httpx.Timeout(timeout=settings.github_api_timeout)  # in seconds
 

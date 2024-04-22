@@ -1,8 +1,8 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from datetime import datetime
-from .models import Repository
-from .utils import logger
+from app.models import Repository
+from app.utils import logger
 
 
 class RepositoryCRUD:

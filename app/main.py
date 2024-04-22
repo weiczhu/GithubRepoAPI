@@ -7,8 +7,8 @@ from datetime import datetime
 from .utils import logger
 from .models import AsyncSessionLocal, Base, engine
 from .schemas import RepositorySchema
-from .crud import RepositoryCRUD
-from .github_api import fetch_repository_details
+from app.dao.crud import RepositoryCRUD
+from app.external.github_api import fetch_repository_details
 import httpx
 
 app = FastAPI()
