@@ -21,8 +21,8 @@ async def client():
 @pytest.fixture
 async def setup_mocks(mocker):
     mock_startup_event = mocker.patch("app.main.startup_event", new_callable=AsyncMock)
-    mock_get_repository = mocker.patch("app.crud.RepositoryCRUD.get_repository", new_callable=AsyncMock)
-    mock_add_repository = mocker.patch("app.crud.RepositoryCRUD.add_repository", new_callable=AsyncMock)
+    mock_get_repository = mocker.patch("app.dao.crud.RepositoryCRUD.get_repository", new_callable=AsyncMock)
+    mock_add_repository = mocker.patch("app.dao.crud.RepositoryCRUD.add_repository", new_callable=AsyncMock)
     return {
         "startup_event": mock_startup_event,
         "get_repository": mock_get_repository,
@@ -36,6 +36,8 @@ async def test_get_repository_returns_none(setup_mocks, client):
     response = await client.get("/repositories/octocat/Hello-World")
 
     assert response.status_code == 200
+    data = response.json()
+    assert data["fullName"] == EXPECTED_FULL_NAME
 
 
 @pytest.mark.integration
