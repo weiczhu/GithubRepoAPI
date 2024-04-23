@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from sqlalchemy import Column, Integer, String, DateTime, Float
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 from .config import settings
 
 
@@ -12,6 +12,7 @@ class CustomBase(Base):
     __abstract__ = True
 
     def __init__(self, **kwargs):
+        super().__init__()
         for key in kwargs:
             if hasattr(self, key):
                 setattr(self, key, kwargs[key])

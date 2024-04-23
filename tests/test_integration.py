@@ -39,6 +39,7 @@ async def test_get_repository_returns_none(setup_mocks, client):
     data = response.json()
     assert data["fullName"] == EXPECTED_FULL_NAME
 
+
 @pytest.mark.integration
 async def test_get_repository_has_cached_result(setup_mocks, client):
     setup_mocks["get_repository"].return_value = {
