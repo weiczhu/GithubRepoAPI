@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import datetime
 from .utils import logger
 from .schemas import RepositorySchema
-from .dao.crud import RepositoryCRUD, AsyncSessionLocal, create_tables
+from .dao.crud import RepositoryCRUD, create_tables, get_db
 from .external.github_api import fetch_repository_details
 import httpx
 
@@ -21,11 +21,6 @@ async def startup_event():
     except Exception as e:
         logger.error(f"Error occurred while App starting: {str(e)}")
         raise e
-
-
-async def get_db():
-    async with AsyncSessionLocal() as session:
-        yield session
 
 
 @app.get("/status", response_model=dict)

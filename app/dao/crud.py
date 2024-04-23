@@ -101,7 +101,12 @@ AsyncSessionLocal = sessionmaker(bind=engine, class_=AsyncSession, expire_on_com
 
 @exception_handler
 async def create_tables():
-    # Create database tables on startup
+    # Create database tables if not exist on startup
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     logger.info("Tables created successfully.")
+
+
+async def get_db():
+    async with AsyncSessionLocal() as session:
+        yield session
